@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  <title>BlockCasting Wallet</title>
+  <script src="index.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Work+Sans:100,200,300,400,700,800" rel="stylesheet">
+  <link rel="stylesheet" href="https://127.0.0.1:8443/resources/main/css/open-iconic-bootstrap.min.css">
+  <link rel="stylesheet" href="https://127.0.0.1:8443/resources/main/css/animate.css">
+  
+  <link rel="stylesheet" href="https://127.0.0.1:8443/resources/main/css/owl.carousel.min.css">
+  <link rel="stylesheet" href="https://127.0.0.1:8443/resources/main/css/owl.theme.default.min.css">
+  <link rel="stylesheet" href="https://127.0.0.1:8443/resources/main/css/magnific-popup.css">
+
+  <link rel="stylesheet" href="https://127.0.0.1:8443/resources/main/css/aos.css">
+
+  <link rel="stylesheet" href="https://127.0.0.1:8443/resources/main/css/ionicons.min.css">
+
+  <link rel="stylesheet" href="https://127.0.0.1:8443/resources/main/css/bootstrap-datepicker.css">
+  <link rel="stylesheet" href="https://127.0.0.1:8443/resources/main/css/jquery.timepicker.css">
+
+  
+  <link rel="stylesheet" href="https://127.0.0.1:8443/resources/main/css/flaticon.css">
+  <link rel="stylesheet" href="https://127.0.0.1:8443/resources/main/css/icomoon.css">
+  <link rel="stylesheet" href="https://127.0.0.1:8443/resources/main/css/style.css">
+  
+</head>
+
+<body>
+  <div class="container" >
+    
+      <div class="col-md-12" style="padding-top: 20px">    
+          <div class="row">   
+          <div class="col-sm-3" > 
+            <b style="font-size: 16px">BlockCasting</b>
+          </div>
+          <div class="col-sm-7"> 
+          </div> 
+          <div class="col-sm-2"> 
+            <button type="button" 
+              class="btn btn-default" 
+              id="logout" 
+              style="display: none; font-size: 12px"
+              onclick="App.handleLogout()">
+              Logout
+            </button>
+          </div>
+      </div>
+      <hr/> 
+    </div>
+  
+    
+    
+    <div id="spin"></div>    
+    
+    
+    
+    <div class="row text-center">
+      <div id="transaction"></div>
+    </div>  
+
+    <br />
+
+    <div class="row text-center">
+      <div class="col-md-12 ">
+         <div id="sendKlay" hidden="true" >    <!--form 으로 바꾸기,,,? -->
+            <p  style="text-align: center; font-size: 20px; ">KLAY 송금하기</p>    
+            <br/>
+            <div class="text-center" id="contractBalance"></div> 
+
+            <div class="col-md-12">
+            
+                <label for="receiver" class="font-weight-bold" style="float: left; padding-top: 15px;">받는 사람</label>
+              
+                <div class="row">
+                    
+                    <div id=receiverName></div>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" id="receiver" onkeypress="if(window.event.keyCode=='13'){App.deposit()}"
+                       />
+                  </div>
+                  
+                </div>
+              </div>
+            
+
+              <br />
+            <div class="col-md-12">
+            
+              <label for="amount" class="font-weight-bold" style="float: left; padding-top: 15px;">송금 금액</label>
+            
+              <div class="row">
+                <div class="col-sm-10">
+                  <input type="number" class="form-control" id="amount" onkeypress="if(window.event.keyCode=='13'){App.sendfnc()}"
+                    placeholder="송금할 금액을 입력해주세요." />
+                </div>
+                <div class="col-sm-1" style="padding-top: 10px;">
+                  <b style="font-size: 17px; ">KLAY</b>
+                </div>
+              </div>
+            </div>
+            <br/>
+          <div class="form-group"> 
+              <div class="col-md-12 mb-3 mb-md-2 text-center">
+                  <!-- <button type="button" class="btn btn-primary pill px-4" onclick="App.deposit()">송금</button> -->
+                  <button type="button" class="btn btn-primary pill px-4" onclick="App.sendfnc()">송금</button>
+            </div> 
+           </div>
+           <div class="form-group"> 
+              <div class="col-md-12 mb-3 mb-md-2 text-center">
+                  <!-- <button type="button" class="btn btn-primary pill px-4" onclick="App.deposit()">송금</button> -->
+                  <!-- <button type="button" class="btn btn-primary pill px-4" onclick="App.receiverfnc()">받기</button> -->
+            </div> 
+           </div>
+
+
+           
+        </div>
+      </div>       
+    </div>
+  </div>  
+</div>
+<!-- loader
+<div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div> -->
+
+
+  <div class="modal fade" tabindex="-1" role="dialog" id="loginWalletModal">
+    <div class="modal-dialog modal-md">
+      <div class="modal-content modal-90size">   
+          <div class="modal-header">&nbsp;BlockCasting
+              <button type="button" class="close"  data-dismiss="modal" aria-label="Close" ><span aria-hidden="true">&times;</span></button>
+            </div>      
+        <div class="modal-body">
+          <p  style="text-align: center; font-size: 25px">Wallet Login</p>
+          <div class="container">
+              <ul class="nav nav-pills tab-nav mb-6" id="pills-tab" role="tablist" style="margin-bottom: 0">
+                  <li class="nav-item">
+                    <button class="btn btn-primary pill px-1"  id="usingPrivateKey" >&nbsp;Using Private Key&nbsp;</button>
+                  </li>
+                  &nbsp;&nbsp;
+                  <li class="nav-item">
+                   <button class="btn btn-primary pill px-1"  id="usingKeystoreFile">&nbsp;Using Keystore File&nbsp;</button>
+                  </li>
+                </ul > 
+                <hr/>
+        <div id="usingKeystoreFileHere">
+          <!-- <div class="form-group">
+            <label for="keystore"><b>Keystore</b></label>
+            <input type="file" id="keystore" onchange="App.handleImport()">
+          </div>
+          <div class="form-group">
+            <label for="input-password"><b>비밀번호</b></label>
+            <input type="password" class="form-control" id="input-password" onkeypress="if(window.event.keyCode=='13'){App.handleLogin()" onchange="App.handlePassword()">
+            <p class="help-block" id="message"></p>
+          </div> -->
+        </div>
+        
+        <div id="usingPrivateKeyFileHere">
+        <div class="form-group">
+          <label for="input-privateKey"><b>Private Key</b></label>
+          <input type="privateKey" class="form-control" id="input-privateKey" onkeypress="if(window.event.keyCode=='13'){App.integrateWallet($('#input-privateKey').val())}" >
+          <p class="help-block" id="message"></p>
+        </div>
+      </div>
+        </div>
+      </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
+           <button type="button" class="btn btn-primary" id="submit" onclick="App.integrateWallet($('#input-privateKey').val())">로그인</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+
+
+  <script src="https://127.0.0.1:8443/resources/main/js/jquery.min.js"></script>
+  <script src="https://127.0.0.1:8443/resources/main/js/jquery-migrate-3.0.1.min.js"></script>
+  <script src="https://127.0.0.1:8443/resources/main/js/popper.min.js"></script>
+  <script src="https://127.0.0.1:8443/resources/main/js/bootstrap.min.js"></script>
+  <script src="https://127.0.0.1:8443/resources/main/js/jquery.easing.1.3.js"></script>
+  <script src="https://127.0.0.1:8443/resources/main/js/jquery.waypoints.min.js"></script>
+  <script src="https://127.0.0.1:8443/resources/main/js/jquery.stellar.min.js"></script>
+  <script src="https://127.0.0.1:8443/resources/main/js/owl.carousel.min.js"></script>
+  <script src="https://127.0.0.1:8443/resources/main/js/jquery.magnific-popup.min.js"></script>
+  <script src="https://127.0.0.1:8443/resources/main/js/aos.js"></script>
+  <script src="https://127.0.0.1:8443/resources/main/js/jquery.animateNumber.min.js"></script>
+  <script src="https://127.0.0.1:8443/resources/main/js/bootstrap-datepicker.js"></script>
+  <script src="https://127.0.0.1:8443/resources/main/js/jquery.timepicker.min.js"></script>
+  <script src="https://127.0.0.1:8443/resources/main/js/particles.min.js"></script>
+  <script src="https://127.0.0.1:8443/resources/main/js/particle.js"></script>
+  <script src="https://127.0.0.1:8443/resources/main/js/scrollax.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>	
+  
+  <script type="text/javascript"> 
+  var klaytnAddress='';
+  var amount;
+  //var receiver;
+  //receiver = getParam("receiverAddress");
+  var txHashSend;
+  var txHashReceive;
+  var txType;
+  // $(window).bind("beforeunload", function (e){
+  //  window.opener.location.replace("https://127.0.0.1:8443");
+  // });
+
+  var getParam = function (key) {
+      var _parammap = {};
+      document.location.search.replace(/\??(?:([^=]+)=([^&]*)&?)/g, function () {
+        function decode(s) {
+          return decodeURIComponent(s.split("+").join(" "));
+        }
+
+        _parammap[decode(arguments[1])] = decode(arguments[2]);
+      });
+
+      return _parammap[key];
+  };
+  
+  function updateMyWalletAddress() {
+        //alert("함수들어옴:: "+klaytnAddress);
+        popWin
+          = window.open("https://127.0.0.1:8443/klaytnTx/updateMyWalletAddress?myWalletAddress=" + klaytnAddress,
+            //"https://127.0.0.1:8443",
+            "popWin2",
+            "position=absolute,left=" + (screen.availWidth + 500) + ",top="+ (screen.availHeight + 500) +",width=1,height=1,marginwidth=0,marginheight=0," +
+            "scrollbars=no,scrolling=no,menubar=no,resizable=no, z-index=-1");
+        swal("Klaytn 지갑 주소 저장 완료", "", "success");
+  }
+
+  function updateKlaytnTx() {
+    //self.location.replace("https://127.0.0.1:8443/klaytnTx/addSendKlaytnTx?txHashSend="+txHashSend+"&txAmount="+amount);  
+    //self.location.replace("https://127.0.0.1:8443/klaytnTx/addSendKlaytnTx?txAmount="+amount+"&txHashSend="+txHashSend);
+    
+     popWin
+           = window.open("https://127.0.0.1:8443/klaytnTx/updateKlaytnTx?klaytnTxNo="+getParam("klaytnTxNo")+"&txHashReceive="+txHashReceive,
+             "popWin3",
+             "position=absolute,left=" + (screen.availWidth + 500) + ",top="+ (screen.availHeight + 500) +",width=1,height=1,marginwidth=0,marginheight=0," +
+            "scrollbars=no,scrolling=no,menubar=no,resizable=no");
+            swal("Klay 받기 완료!", "", "success");
+    window.opener.location.replace("https://127.0.0.1:8443");
+    self.close();
+
+  }
+
+  function addSendKlaytnTx() {
+    //self.location.replace("https://127.0.0.1:8443/klaytnTx/addSendKlaytnTx?txHashSend="+txHashSend+"&txAmount="+amount);  
+    //self.location.replace("https://127.0.0.1:8443/klaytnTx/addSendKlaytnTx?txAmount="+amount+"&txHashSend="+txHashSend);
+    
+     popWin
+           = window.open("https://127.0.0.1:8443/klaytnTx/addSendKlaytnTx?txHashSend="+txHashSend+"&txAmount="+amount,
+             "popWin3",
+             "position=absolute,left=" + (screen.availWidth + 500) + ",top="+ (screen.availHeight + 500) +",width=1,height=1,marginwidth=0,marginheight=0," +
+            "scrollbars=no,scrolling=no,menubar=no,resizable=no");
+            swal("Klay 전송 완료!", "", "success");
+    self.close();
+
+  }
+
+  $(function(){  
+    
+    //$("#receiverName").append("<p>"+getParam("receiverName")+"</p>"); 
+    $("#receiver").val(getParam("receiverAddress"))
+
+    
+  });
+
+  $(document).ready(function(){
+    txType = getParam("txType");
+			// alert(getParam("txType"));
+    if(getParam("txType")!="R"){
+      // $("#sendKlay").attr('display','none');
+      $("#sendKlay").removeAttr('hidden');
+    }
+
+  });
+  $(function(){
+			 
+			 $("#usingKeystoreFile").on("click" , function() {
+				 
+          $("#usingPrivateKeyFileHere").empty();
+          $("#usingKeystoreFileHere").empty();
+          $("#submit").remove();
+					$("#usingKeystoreFileHere").append("<div class=\"form-group\">\r\n" + 
+"            <label for=\"keystore\"><b>Keystore</b></label>\r\n" + 
+"            <input type=\"file\" id=\"keystore\" onchange=\"App.handleImport()\">\r\n" + 
+"          </div>\r\n" + 
+"          <div class=\"form-group\">\r\n" + 
+"            <label for=\"input-password\"><b>비밀번호</b></label>\r\n" + 
+"            <input type=\"password\" class=\"form-control\" id=\"input-password\" onkeypress=\"if(window.event.keyCode=='13'){App.handleLogin()\" onchange=\"App.handlePassword()\">\r\n" + 
+"            <p class=\"help-block\" id=\"message\"></p>\r\n" + 
+"          </div>");
+          
+          
+          $(".modal-footer").append("<button type=\"button\" class=\"btn btn-primary\" id=\"submit\" onclick=\"App.handleLogin()\">로그인</button>");
+				});
+
+			 $("#usingPrivateKey").on("click" , function() {
+          $("#usingPrivateKeyFileHere").empty();
+          $("#usingKeystoreFileHere").empty();
+          $("#submit").remove();
+					$("#usingPrivateKeyFileHere").append("<div class=\"form-group\">\r\n" + 
+          "          <label for=\"input-privateKey\"><b>Private Key</b></label>\r\n" + 
+            "          <input type=\"privateKey\" class=\"form-control\" id=\"input-privateKey\" onkeypress=\"if(window.event.keyCode=='13'){App.integrateWallet($('#input-privateKey').val())}\" >\r\n" + 
+            "          <p class=\"help-block\" id=\"message\"></p>\r\n" + 
+          "        </div>");
+          $(".modal-footer").append(" <button type=\"button\" class=\"btn btn-primary\" id=\"submit\" onclick=\"App.integrateWallet($('#input-privateKey').val())\">로그인</button>")
+
+				});
+			 
+			 
+		 });
+
+  
+</script>
+</body>
+
+</html>
+<style>
+    .yellow-box {
+      background-color: #FFC;
+      padding: 2rem;
+      margin: 0 auto;
+      max-width: 500px;
+      font-size: 80px;
+    }
+  
+    #timer {
+      font-size: 80px;
+      color: red;
+    }
+  
+    @keyframes spinner-line-fade-more {
+      0%, 100% {
+        opacity: 0;
+      }
+      1% {
+        opacity: 1;
+      }
+    }
+  
+    @keyframes spinner-line-fade-quick {
+      0%, 39%, 100% {
+        opacity: 0.25;
+      }
+      40% {
+        opacity: 1;
+      }
+    }
+  
+    @keyframes spinner-line-fade-default {
+      0%, 100% {
+        opacity: 0.22;
+      }
+      1% {
+        opacity: 1;
+      }
+    }
+  </style>
